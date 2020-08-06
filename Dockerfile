@@ -55,5 +55,3 @@ VOLUME [ "/data/db", "/data/journal" ]
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/usr/local/bin/rrdcached" ]
 
-HEALTHCHECK --interval=10s --timeout=5s \
-  CMD echo PING | nc 127.0.0.1 42217 | grep PONG || exit 1
