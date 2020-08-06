@@ -1,0 +1,31 @@
+rrdcached:
+        image: calinrigo/rrdcached:1.72.1
+        volumes:
+          - type: bind
+            source: /storage/libre-docker/librenms/data/librenms/rrd
+            target: /data/rrd
+          - type: bind
+            source: /storage/libre-docker/librenms/data/librenms/rrd-journal
+            target: /data/journal
+        networks:
+         - prod_int_net
+        deploy:
+         placement:
+            constraints:
+             - "node.labels.placement == dc"
+         mode: replicated
+         replicas: 1
+        restart: always
+        healthcheck:
+         test: echo PING | nc 127.0.0.1 42217 | grep PONG || exit 1
+         interval: 60s
+         timeout: 30s
+         start_period: 180s
+         retries: 3
+        environment:
+         << : *env-global        
+         LOG_LEVEL: "LOG_INFO"
+         WRITE_TIMEOUT: "600"
+         WRITE_JITTER: "1800"
+         WRITE_THREADS: "4"
+         FLUSH_DEAD_DATA_INTERVAL: "3600"
